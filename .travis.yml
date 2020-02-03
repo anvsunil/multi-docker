@@ -15,14 +15,14 @@ script:
 
 after_success:
     - docker build -t anvsunil/multi-client ./client 
-    - docker build -t anvsunil/multi-ngnix ./ngnix
+    - docker build -t anvsunil/multi-nginx ./nginx
     - docker build -t anvsunil/multi-server ./server
     - docker build -t anvsunil/multi-worker ./worker
     #Log in to the docker CLI
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
     # Take those images and push them to docker hub
     - docker push anvsunil/multi-client
-    - docker push anvsunil/multi-ngnix
+    - docker push anvsunil/multi-nginx
     - docker push anvsunil/multi-server
     - docker push anvsunil/multi-worker
 
