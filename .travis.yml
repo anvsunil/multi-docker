@@ -1,0 +1,30 @@
+sudo: required
+services:
+    - docker
+
+before_install:
+    #At the end instead of . for build context we are using ./client to get
+    # build context
+    - docker build -t anvsunil/react-test -f ./client/Dockerfile.dev ./client
+
+# Script section is primary test running section
+#If any of the section in scripts section exits with 0
+# Then Travis CI will assume that our build failed
+script:
+    - docker run -e CI=true anvsunil/react-test npm test -- --coverage
+
+after_success:
+    - docker build -t anvsunil/multi-client ./client 
+    - docker build -t anvsunil/multi-ngnix ./ngnix
+    - docker build -t anvsunil/multi-server ./server
+    - docker build -t anvsunil/multi-worker ./worker
+    #Log in to the docker CLI
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # Take those images and push them to docker hub
+    - docker push anvsunil/multi-client
+    - docker push anvsunil/multi-ngnix
+    - docker push anvsunil/multi-server
+    - docker push anvsunil/multi-worker
+
+
+
